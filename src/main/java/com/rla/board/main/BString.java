@@ -60,7 +60,6 @@ public class BString {
     private static void bStart() {
         i().output_Width = i().label_Width + i().value_Width + 3;// 2PIPES+DEFINE
         append(repeat(DASH, i().output_Width) + END_LINE);
-
     }
 
     /**
@@ -256,6 +255,14 @@ public class BString {
     }
 
     /**
+     * @return the board as a String
+     */
+    public static String t2LogString() {
+        i().board.insert(0, END_LINE);
+        return t2String();
+    }
+
+    /**
      * @return the board as a String for html placement
      */
     public String getWebBoardString() {
@@ -384,7 +391,6 @@ public class BString {
     }
 
     public static void main(String[] args) {
-        long start = System.nanoTime();
         BString.init(10, 50, 50);
         BString.bCenter("This is a demo with BoardString");
         BString.bSeparationDouble();
@@ -411,7 +417,6 @@ public class BString {
         BString.bUpDown();
         BString.bCenter("This was a demo with BoardString");
         BString.bUpDown();
-        System.out.println(BString.t2String());
-        System.out.println(System.nanoTime() - start);
+        System.out.println(BString.t2LogString());
     }
 }
