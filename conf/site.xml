@@ -1,4 +1,4 @@
-<project name="BoardString">
+<project name="BString">
   <skin>
     <groupId>org.apache.maven.skins</groupId>
     <artifactId>maven-classic-skin</artifactId>
