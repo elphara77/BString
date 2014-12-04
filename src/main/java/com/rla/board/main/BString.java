@@ -29,11 +29,7 @@ public class BString {
 
     private static final char CORRUPT_VALUE = '?';
 
-    private int output_Width;
-
-    private int label_Width;
-
-    private int value_Width;
+    private Integer output_Width;
 
     private String trueToString = "true";
 
@@ -41,61 +37,95 @@ public class BString {
 
     private String nullToString = "null";
 
-    private int borderWidth = 0;
+    private Integer borderWidth = 0;
+    private static Integer borderWidth_Setting;
+
+    private Integer label_Width;
+    private static Integer label_Width_Setting;
+
+    private Integer value_Width;
+    private static Integer value_Width_Setting;
 
     private StringBuilder board = new StringBuilder();
 
-    private static final BString instance = new BString();
-
-    private static BString i() {
-        return instance;
+    public BString() {
+        if (borderWidth_Setting != null) {
+            this.borderWidth = borderWidth_Setting;
+            this.label_Width = label_Width_Setting;
+            this.value_Width = value_Width_Setting;
+        } else {
+            this.borderWidth = 1;
+            this.label_Width = 20;
+            this.value_Width = 20;
+        }
+        this.output_Width = this.label_Width + this.value_Width + 3;// 2PIPES+DEFINE
+        bStart();
     }
 
-    private BString() {
+    public BString(final int borderWidth, final int label_Width, final int value_Width, boolean keepSettings) {
+        this.borderWidth = borderWidth;
+        this.label_Width = label_Width;
+        this.value_Width = value_Width;
+
+        this.output_Width = this.label_Width + this.value_Width + 3;// 2PIPES+DEFINE
+
+        if (keepSettings) {
+            borderWidth_Setting = borderWidth;
+            label_Width_Setting = label_Width;
+            value_Width_Setting = value_Width;
+        }
+
+        bStart();
+    }
+    
+    public static void resetSettings() {
+        borderWidth_Setting = null;
+        label_Width_Setting = null;
+        value_Width_Setting = null;
     }
 
     /**
      * starts a boardString
      */
-    private static void bStart() {
-        i().output_Width = i().label_Width + i().value_Width + 3;// 2PIPES+DEFINE
-        append(repeat(DASH, i().output_Width) + END_LINE);
+    private void bStart() {
+        this.output_Width = this.label_Width + this.value_Width + 3;// 2PIPES+DEFINE
+        append(repeat(DASH, this.output_Width) + END_LINE);
     }
 
     /**
      * ends a boardString
      */
-    private static void bEnd() {
-        append(repeat(DASH, i().output_Width) + END_LINE);
+    private void bEnd() {
+        append(repeat(DASH, this.output_Width) + END_LINE);
     }
 
     /**
      * prints a simple separation
      */
-    public static void bSeparation() {
-        append(PLUS + repeat(DASH, i().output_Width - 2) + PLUS + END_LINE);
+    public void bSeparation() {
+        append(PLUS + repeat(DASH, this.output_Width - 2) + PLUS + END_LINE);
     }
 
     /**
      * prints a double separation
      */
-    public static void bSeparationDouble() {
-        append(PLUS + repeat(DDASH, i().output_Width - 2) + PLUS + END_LINE);
+    public void bSeparationDouble() {
+        append(PLUS + repeat(DDASH, this.output_Width - 2) + PLUS + END_LINE);
     }
 
     /**
      * prints a new line into boardString
      */
-    public static void bNewLine() {
-        append(PIPE + repeat(BLANK, i().output_Width - 2) + PIPE + END_LINE);
+    public void bNewLine() {
+        append(PIPE + repeat(BLANK, this.output_Width - 2) + PIPE + END_LINE);
     }
 
     /**
      * prints alternatively up and down chars begins with up char see
      * bDownUp
      */
-    public static void bUpDown() {
-        for (int i = 0; i < i().output_Width; i++)
+    public void bUpDown() {
+        for (int i = 0; i < this.output_Width; i++)
             append((i % 2 == 0) ? UP : DOWN);
         append(END_LINE);
     }
@@ -104,8 +134,8 @@ public class BString {
      * prints alternatively down and up chars begins with down char
      * see bUpDown
      */
-    public static void bDownUp() {
-        for (int i = 0; i < i().output_Width; i++)
+    public void bDownUp() {
+        for (int i = 0; i < this.output_Width; i++)
             append((i % 2 == 0) ? DOWN : UP);
         append(END_LINE);
     }
@@ -116,15 +146,15 @@ public class BString {
      * @param toLeft
      *            : the string
      */
-    public static void bLeft(final String toLeft) {
+    public void bLeft(final String toLeft) {
         String toLeftTmp = getBorder() + toLeft + getBorder();
         int len = toLeftTmp.length();
-        if (len == i().output_Width - 2)
+        if (len == this.output_Width - 2)
             append(PIPE + toLeftTmp + PIPE + END_LINE);
-        else if (len >= i().output_Width - 2)
-            append(PIPE + toLeftTmp.substring(0, i().output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
+        else if (len >= this.output_Width - 2)
+            append(PIPE + toLeftTmp.substring(0, this.output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
         else {
-            int all_blanks_count = i().output_Width - 2 - len;
+            int all_blanks_count = this.output_Width - 2 - len;
             append(PIPE + toLeftTmp + repeat(BLANK, all_blanks_count) + PIPE + END_LINE);
         }
     }
@@ -135,15 +165,15 @@ public class BString {
      * @param toRight
      *            : the string
      */
-    public static void bRight(final String toRight) {
+    public void bRight(final String toRight) {
         String toRightTmp = getBorder() + toRight + getBorder();
         int len = toRightTmp.length();
-        if (len == i().output_Width - 2)
+        if (len == this.output_Width - 2)
             append(PIPE + toRightTmp + PIPE + END_LINE);
-        else if (len > i().output_Width - 2)
-            append(PIPE + toRightTmp.substring(0, i().output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
+        else if (len > this.output_Width - 2)
+            append(PIPE + toRightTmp.substring(0, this.output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
         else {
-            int all_blanks_count = i().output_Width - 2 - len;
+            int all_blanks_count = this.output_Width - 2 - len;
             append(PIPE + repeat(BLANK, all_blanks_count) + toRightTmp + PIPE + END_LINE);
         }
     }
@@ -154,15 +184,15 @@ public class BString {
      * @param toCenter
      *            : the string
      */
-    public static void bCenter(final String toCenter) {
+    public void bCenter(final String toCenter) {
         String toCenterTmp = getBorder() + toCenter + getBorder();
         int len = toCenterTmp.length();
-        if (len == i().output_Width - 2)
+        if (len == this.output_Width - 2)
             append(PIPE + toCenterTmp + PIPE + END_LINE);
-        else if (len >= i().output_Width - 2) {
-            append(PIPE + toCenterTmp.substring(0, i().output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
+        else if (len >= this.output_Width - 2) {
+            append(PIPE + toCenterTmp.substring(0, this.output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
         } else {
-            int all_blanks_count = i().output_Width - 2 - len;
+            int all_blanks_count = this.output_Width - 2 - len;
             int left_blank = all_blanks_count / 2;
             append(PIPE + repeat(BLANK, left_blank) + toCenterTmp + repeat(BLANK, all_blanks_count - left_blank) + PIPE + END_LINE);
         }
@@ -177,9 +207,9 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public static void bPrintLR(final String label, final Object value) {
-        String labelStr = getConformedStringLeft(getBorder() + label, i().label_Width);
-        String valueStr = getConformedStringRight(eval(value) + getBorder(), i().value_Width - DEFINE.length() + 1);
+    public void bPrintLR(final String label, final Object value) {
+        String labelStr = getConformedStringLeft(getBorder() + label, this.label_Width);
+        String valueStr = getConformedStringRight(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
 
@@ -192,9 +222,9 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public static void bPrintLL(final String label, final Object value) {
-        String labelStr = getConformedStringLeft(getBorder() + label, i().label_Width);
-        String valueStr = getConformedStringLeft(eval(value) + getBorder(), i().value_Width - DEFINE.length() + 1);
+    public void bPrintLL(final String label, final Object value) {
+        String labelStr = getConformedStringLeft(getBorder() + label, this.label_Width);
+        String valueStr = getConformedStringLeft(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
 
@@ -208,8 +238,8 @@ public class BString {
      *            : the value to print
      */
     public void bPrintRL(final String label, final Object value) {
-        String labelStr = getConformedStringRight(getBorder() + label, i().label_Width);
-        String valueStr = getConformedStringLeft(eval(value) + getBorder(), i().value_Width - DEFINE.length() + 1);
+        String labelStr = getConformedStringRight(getBorder() + label, this.label_Width);
+        String valueStr = getConformedStringLeft(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
 
@@ -237,29 +267,27 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public static void bPrintCC(final String label, final Object value) {
-        String labelStr = getConformedStringCentered(getBorder() + label, i().label_Width);
-        String valueStr = getConformedStringCentered(eval(value) + getBorder(), i().value_Width - DEFINE.length() + 1);
+    public void bPrintCC(final String label, final Object value) {
+        String labelStr = getConformedStringCentered(getBorder() + label, this.label_Width);
+        String valueStr = getConformedStringCentered(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
 
     /**
      * @return the board as a String
      */
-    public static String t2String() {
+    public String toString() {
         bEnd();
-        final String ret = i().board.toString();
-        i().board = new StringBuilder();
-        bStart();
+        final String ret = this.board.toString();
         return ret;
     }
 
     /**
      * @return the board as a String
      */
-    public static String t2LogString() {
-        i().board.insert(0, END_LINE);
-        return t2String();
+    public String toLogString() {
+        this.board.insert(0, END_LINE);
+        return toString();
     }
 
     /**
@@ -307,15 +335,15 @@ public class BString {
         }
     }
 
-    private static String eval(final Object o) {
+    private String eval(final Object o) {
         if (o instanceof Boolean) {
             Boolean bool = (Boolean) o;
             if (bool)
-                return i().trueToString;
+                return this.trueToString;
             else
-                return i().falseToString;
+                return this.falseToString;
         }
-        return (o != null) ? o.toString() : i().nullToString;
+        return (o != null) ? o.toString() : this.nullToString;
     }
 
     /**
@@ -323,8 +351,8 @@ public class BString {
      * 
      * @param trueToString
      */
-    public static void setTrueToString(final String trueToString) {
-        i().trueToString = trueToString;
+    public void setTrueToString(final String trueToString) {
+        this.trueToString = trueToString;
     }
 
     /**
@@ -332,8 +360,8 @@ public class BString {
      * 
      * @param falseToString
      */
-    public static void setFalseToString(final String falseToString) {
-        i().falseToString = falseToString;
+    public void setFalseToString(final String falseToString) {
+        this.falseToString = falseToString;
     }
 
     /**
@@ -342,12 +370,12 @@ public class BString {
      * @param nullToString
      * @return
      */
-    public static String setNullToString(final String nullToString) {
-        return i().nullToString = nullToString;
+    public String setNullToString(final String nullToString) {
+        return this.nullToString = nullToString;
     }
 
-    private static String getBorder() {
-        return repeat(BLANK, i().borderWidth);
+    private String getBorder() {
+        return repeat(BLANK, this.borderWidth);
     }
 
     /**
@@ -355,35 +383,20 @@ public class BString {
      * 
      * @param newDefineString
      */
-    public static void setDefineString(final String newDefineString) {
+    public void setDefineString(final String newDefineString) {
         DEFINE = newDefineString;
     }
 
-    private static void append(final String toAppend) {
-        i().board.append(toAppend);
+    private void append(final String toAppend) {
+        this.board.append(toAppend);
     }
 
-    private static void append(final char toAppend) {
-        i().board.append(toAppend);
+    private void append(final char toAppend) {
+        this.board.append(toAppend);
     }
 
     public int getLabel_Width() {
-        return i().label_Width;
-    }
-
-    /**
-     * set the width between the border of the board and the labels or
-     * values
-     * 
-     * @param width
-     */
-    public static void init(final int border_width, int label_Width, int value_Width) {
-        i().borderWidth = border_width;
-        i().label_Width = label_Width;
-        i().value_Width = value_Width;
-        i().output_Width = i().label_Width + i().value_Width + 3;// 2PIPES+DEFINE
-        bStart();
-
+        return this.label_Width;
     }
 
     public int getValue_Width() {
@@ -391,32 +404,33 @@ public class BString {
     }
 
     public static void main(String[] args) {
-        BString.init(10, 50, 50);
-        BString.bCenter("This is a demo with BoardString");
-        BString.bSeparationDouble();
-        BString.bNewLine();
-        BString.bLeft("this appears on left");
-        BString.bNewLine();
-        BString.bRight("this on right");
-        BString.bNewLine();
-        BString.bSeparation();
-        BString.bCenter("label value prints :");
-        BString.bSeparation();
-        BString.bNewLine();
-        BString.bPrintLL("my Label", Boolean.TRUE);
-        BString.bNewLine();
-        BString.setDefineString(">>>>>> ");
-        BString.bPrintCC("my Label centered", 12.34);
-        BString.bNewLine();
-        BString.bSeparation();
-        BString.setDefineString("");
-        BString.bPrintLR("4 jan. 2012", "written by rla");
-        BString.setDefineString(": ");
+        BString bs = new BString(10, 50, 50, false);
+        bs.bCenter("This is a demo with BoardString");
+        bs.bSeparationDouble();
+        bs.bNewLine();
+        bs.bLeft("this appears on left");
+        bs.bNewLine();
+        bs.bRight("this on right");
+        bs.bNewLine();
+        bs.bSeparation();
+        bs.bCenter("label value prints :");
+        bs.bSeparation();
+        bs.bNewLine();
+        bs.bPrintLL("my Label", Boolean.TRUE);
+        bs.bNewLine();
+        bs.setDefineString(">>>>>> ");
+        bs.bPrintCC("my Label centered", 12.34);
+        bs.bNewLine();
+        bs.bSeparation();
+        bs.setDefineString("");
+        bs.bPrintLR("4 jan. 2012", "written by rla");
+        bs.setDefineString(": ");
         System.out.println();
-        System.out.println(BString.t2String());
-        BString.bUpDown();
-        BString.bCenter("This was a demo with BoardString");
-        BString.bUpDown();
-        System.out.println(BString.t2LogString());
+        System.out.println(bs.toString());
+        bs = new BString();
+        bs.bUpDown();
+        bs.bCenter("This was a demo with BoardString");
+        bs.bUpDown();
+        System.out.println(bs.toLogString());
     }
 }
