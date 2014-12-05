@@ -59,6 +59,7 @@ public class BString {
             this.value_Width = 20;
         }
         this.output_Width = this.label_Width + this.value_Width + 3;// 2PIPES+DEFINE
+        
         bStart();
     }
 
@@ -279,6 +280,8 @@ public class BString {
     public String toString() {
         bEnd();
         final String ret = this.board.toString();
+        this.board=new StringBuilder();
+        bStart();
         return ret;
     }
 
@@ -427,7 +430,6 @@ public class BString {
         bs.setDefineString(": ");
         System.out.println();
         System.out.println(bs.toString());
-        bs = new BString();
         bs.bUpDown();
         bs.bCenter("This was a demo with BoardString");
         bs.bUpDown();
