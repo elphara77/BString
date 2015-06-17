@@ -3,5 +3,5 @@
 
 > Description :
 
- : a board String destined to have a more visual log info into logging lines
+The board String destined to have a more visual log info into logging lines
 
