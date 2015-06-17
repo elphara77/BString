@@ -1,13 +1,17 @@
 package com.rla.board.main;
 
 /**
- * @author Raphaël Laporte <br/>
- *         raphael.laporte@skynet.be <br/>
- *         4 jan. 2012 1st version <br/>
- *         3 dec. 2014 2nd version
+ * @author Raphaël Laporte
  */
-
+// Raphael.Laporte@skynet.be
+// 4 jan. 2012 1st version
+// 3 dec. 2014 2nd version
+// 17 jun. 2015 3nd version
 public class BString {
+
+    private static final int DEFAULT_BORDER_WIDTH = 1;
+    private static final int DEFAULT_LABEL_WIDTH = 30;
+    private static final int DEFAULT_VALUE_WIDTH = 30;
 
     private static final char END_LINE = '\n';
 
@@ -27,7 +31,7 @@ public class BString {
 
     private static final char DOWN = '\\';
 
-    private static final char CORRUPT_VALUE = '?';
+    private static final String CORRUPT_VALUE = "...";
 
     private Integer output_Width;
 
@@ -54,12 +58,12 @@ public class BString {
             this.label_Width = label_Width_Setting;
             this.value_Width = value_Width_Setting;
         } else {
-            this.borderWidth = 1;
-            this.label_Width = 20;
-            this.value_Width = 20;
+            this.borderWidth = DEFAULT_BORDER_WIDTH;
+            this.label_Width = DEFAULT_LABEL_WIDTH;
+            this.value_Width = DEFAULT_VALUE_WIDTH;
         }
         this.output_Width = this.label_Width + this.value_Width + 3;// 2PIPES+DEFINE
-        
+
         bStart();
     }
 
@@ -78,7 +82,67 @@ public class BString {
 
         bStart();
     }
-    
+
+    public static BString newInstance() {
+        final String header = getHeader();
+        BString bs = getMaxBString(getMaxLen(header));
+        bs.bCenter(header);
+        bs.bSeparationDouble();
+        return bs;
+    }
+
+    public static BString newInstance(String... strs) {
+        String header = getHeader();
+
+        int max = getMaxLen(strs);
+        int maxHead = getMaxLen(header);
+        if (maxHead > max) {
+            max = maxHead;
+        }
+
+        BString bs = getMaxBString(max);
+        bs.bCenter(header);
+        bs.bSeparationDouble();
+
+        for (String str : strs) {
+            bs.bCenter(str);
+        }
+
+        return bs;
+    }
+
+    public void add(String... strs) {
+        for (String str : strs) {
+            this.bCenter(str);
+        }
+    }
+
+    private static String getHeader() {
+        final StackTraceElement caller = Thread.currentThread().getStackTrace()[3];
+        return caller.getClassName() + " --> " + caller.getMethodName();
+    }
+
+    private static BString getMaxBString(int max) {
+        BString bs;
+        if ((DEFAULT_LABEL_WIDTH + DEFAULT_VALUE_WIDTH) < max) {
+            bs = new BString(1, max / 2, max - (max / 2) + 1, false);
+        } else {
+            bs = new BString();
+        }
+
+        return bs;
+    }
+
+    private static int getMaxLen(String... strs) {
+        int max = 0;
+        for (String str : strs) {
+            if (str != null && str.length() > max) {
+                max = str.length();
+            }
+        }
+        return max;
+    }
+
     public static void resetSettings() {
         borderWidth_Setting = null;
         label_Width_Setting = null;
@@ -153,7 +217,7 @@ public class BString {
         if (len == this.output_Width - 2)
             append(PIPE + toLeftTmp + PIPE + END_LINE);
         else if (len >= this.output_Width - 2)
-            append(PIPE + toLeftTmp.substring(0, this.output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
+            append(PIPE + toLeftTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
         else {
             int all_blanks_count = this.output_Width - 2 - len;
             append(PIPE + toLeftTmp + repeat(BLANK, all_blanks_count) + PIPE + END_LINE);
@@ -172,7 +236,7 @@ public class BString {
         if (len == this.output_Width - 2)
             append(PIPE + toRightTmp + PIPE + END_LINE);
         else if (len > this.output_Width - 2)
-            append(PIPE + toRightTmp.substring(0, this.output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
+            append(PIPE + toRightTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
         else {
             int all_blanks_count = this.output_Width - 2 - len;
             append(PIPE + repeat(BLANK, all_blanks_count) + toRightTmp + PIPE + END_LINE);
@@ -191,7 +255,7 @@ public class BString {
         if (len == this.output_Width - 2)
             append(PIPE + toCenterTmp + PIPE + END_LINE);
         else if (len >= this.output_Width - 2) {
-            append(PIPE + toCenterTmp.substring(0, this.output_Width - 3) + CORRUPT_VALUE + PIPE + END_LINE);
+            append(PIPE + toCenterTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
         } else {
             int all_blanks_count = this.output_Width - 2 - len;
             int left_blank = all_blanks_count / 2;
@@ -278,9 +342,10 @@ public class BString {
      * @return the board as a String
      */
     public String toString() {
+        this.board.insert(0, END_LINE);
         bEnd();
         final String ret = this.board.toString();
-        this.board=new StringBuilder();
+        this.board = new StringBuilder();
         bStart();
         return ret;
     }
@@ -289,7 +354,6 @@ public class BString {
      * @return the board as a String
      */
     public String toLogString() {
-        this.board.insert(0, END_LINE);
         return toString();
     }
 
@@ -311,7 +375,7 @@ public class BString {
         if (input.length() == width)
             return input;
         else if (input.length() > width)
-            return input.substring(0, width - 1) + CORRUPT_VALUE;
+            return input.substring(0, width - 1 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " ";
         else
             return input + repeat(BLANK, width - input.length());
     }
@@ -320,7 +384,7 @@ public class BString {
         if (input.length() == width)
             return input;
         else if (input.length() > width)
-            return input.substring(0, width - 1) + CORRUPT_VALUE;
+            return input.substring(0, width - 1 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " ";
         else
             return repeat(BLANK, width - input.length()) + input;
     }
@@ -329,7 +393,7 @@ public class BString {
         if (input.length() == width)
             return input;
         else if (input.length() > width)
-            return input.substring(0, width - 1) + CORRUPT_VALUE;
+            return input.substring(0, width - 1 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " ";
         else {
             int total_blank = width - input.length();
             int total_left = total_blank / 2;
@@ -408,7 +472,7 @@ public class BString {
 
     public static void main(String[] args) {
         BString bs = new BString(10, 50, 50, false);
-        bs.bCenter("This is a demo with BoardString");
+        bs.bCenter("BString");
         bs.bSeparationDouble();
         bs.bNewLine();
         bs.bLeft("this appears on left");
@@ -431,7 +495,7 @@ public class BString {
         System.out.println();
         System.out.println(bs.toString());
         bs.bUpDown();
-        bs.bCenter("This was a demo with BoardString");
+        bs.bCenter("This was a demo with BString");
         bs.bUpDown();
         System.out.println(bs.toLogString());
     }
