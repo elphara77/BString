@@ -7,6 +7,7 @@ package com.rla.board.main;
 // 4 jan. 2012 1st version
 // 3 dec. 2014 2nd version
 // 17 jun. 2015 3nd version
+// 26 aug. 2015 4nd version
 public class BString {
 
     private static final int DEFAULT_BORDER_WIDTH = 1;
@@ -35,11 +36,11 @@ public class BString {
 
     private Integer output_Width;
 
-    private String trueToString = "true";
+    private static String trueToString = "true";
 
-    private String falseToString = "false";
+    private static String falseToString = "false";
 
-    private String nullToString = "null";
+    private static String nullToString = "null";
 
     private Integer borderWidth = 0;
     private static Integer borderWidth_Setting;
@@ -91,10 +92,10 @@ public class BString {
         return bs;
     }
 
-    public static BString newInstance(String... strs) {
+    public static BString newInstance(Object... objs) {
         String header = getHeader();
 
-        int max = getMaxLen(strs);
+        int max = getMaxLen(objs);
         int maxHead = getMaxLen(header);
         if (maxHead > max) {
             max = maxHead;
@@ -104,16 +105,16 @@ public class BString {
         bs.bCenter(header);
         bs.bSeparationDouble();
 
-        for (String str : strs) {
-            bs.bCenter(str);
+        for (Object obj : objs) {
+            bs.bCenter(eval(obj));
         }
 
         return bs;
     }
 
-    public void add(String... strs) {
-        for (String str : strs) {
-            this.bCenter(str);
+    public void add(Object... objs) {
+        for (Object obj : objs) {
+            this.bCenter(eval(obj));
         }
     }
 
@@ -133,9 +134,10 @@ public class BString {
         return bs;
     }
 
-    private static int getMaxLen(String... strs) {
+    private static int getMaxLen(Object... objs) {
         int max = 0;
-        for (String str : strs) {
+        for (Object obj : objs) {
+            String str = eval(obj);
             if (str != null && str.length() > max) {
                 max = str.length();
             }
@@ -208,10 +210,11 @@ public class BString {
     /**
      * prints a string on the left of the board
      * 
-     * @param toLeft
+     * @param obj
      *            : the string
      */
-    public void bLeft(final String toLeft) {
+    public void bLeft(final Object obj) {
+        String toLeft = eval(obj);
         String toLeftTmp = getBorder() + toLeft + getBorder();
         int len = toLeftTmp.length();
         if (len == this.output_Width - 2)
@@ -227,10 +230,11 @@ public class BString {
     /**
      * prints a string on the right of the board
      * 
-     * @param toRight
+     * @param obj
      *            : the string
      */
-    public void bRight(final String toRight) {
+    public void bRight(final Object obj) {
+        String toRight = eval(obj);
         String toRightTmp = getBorder() + toRight + getBorder();
         int len = toRightTmp.length();
         if (len == this.output_Width - 2)
@@ -246,10 +250,11 @@ public class BString {
     /**
      * prints a string on the center of the board
      * 
-     * @param toCenter
+     * @param obj
      *            : the string
      */
-    public void bCenter(final String toCenter) {
+    public void bCenter(final Object obj) {
+        String toCenter = eval(obj);
         String toCenterTmp = getBorder() + toCenter + getBorder();
         int len = toCenterTmp.length();
         if (len == this.output_Width - 2)
@@ -272,8 +277,8 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public void bPrintLR(final String label, final Object value) {
-        String labelStr = getConformedStringLeft(getBorder() + label, this.label_Width);
+    public void bPrintLR(final Object label, final Object value) {
+        String labelStr = getConformedStringLeft(getBorder() + eval(label), this.label_Width);
         String valueStr = getConformedStringRight(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
@@ -287,8 +292,8 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public void bPrintLL(final String label, final Object value) {
-        String labelStr = getConformedStringLeft(getBorder() + label, this.label_Width);
+    public void bPrintLL(final Object label, final Object value) {
+        String labelStr = getConformedStringLeft(getBorder() + eval(label), this.label_Width);
         String valueStr = getConformedStringLeft(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
@@ -302,8 +307,8 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public void bPrintRL(final String label, final Object value) {
-        String labelStr = getConformedStringRight(getBorder() + label, this.label_Width);
+    public void bPrintRL(final Object label, final Object value) {
+        String labelStr = getConformedStringRight(getBorder() + eval(label), this.label_Width);
         String valueStr = getConformedStringLeft(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
@@ -317,8 +322,8 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public void bPrintRR(final String label, final Object value) {
-        String labelStr = getConformedStringRight(getBorder() + label, label_Width);
+    public void bPrintRR(final Object label, final Object value) {
+        String labelStr = getConformedStringRight(getBorder() + eval(label), label_Width);
         String valueStr = getConformedStringRight(eval(value) + getBorder(), value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
@@ -332,8 +337,8 @@ public class BString {
      * @param value
      *            : the value to print
      */
-    public void bPrintCC(final String label, final Object value) {
-        String labelStr = getConformedStringCentered(getBorder() + label, this.label_Width);
+    public void bPrintCC(final Object label, final Object value) {
+        String labelStr = getConformedStringCentered(getBorder() + eval(label), this.label_Width);
         String valueStr = getConformedStringCentered(eval(value) + getBorder(), this.value_Width - DEFINE.length() + 1);
         append(PIPE + labelStr + DEFINE + valueStr + PIPE + END_LINE);
     }
@@ -402,15 +407,18 @@ public class BString {
         }
     }
 
-    private String eval(final Object o) {
+    private static String eval(final Object o) {
+        if (o == null) {
+            return nullToString;
+        }
         if (o instanceof Boolean) {
             Boolean bool = (Boolean) o;
             if (bool)
-                return this.trueToString;
+                return trueToString;
             else
-                return this.falseToString;
+                return falseToString;
         }
-        return (o != null) ? o.toString() : this.nullToString;
+        return o.toString();
     }
 
     /**
@@ -418,8 +426,8 @@ public class BString {
      * 
      * @param trueToString
      */
-    public void setTrueToString(final String trueToString) {
-        this.trueToString = trueToString;
+    public static void setTrueToString(final String trueToString) {
+        BString.trueToString = trueToString;
     }
 
     /**
@@ -428,7 +436,7 @@ public class BString {
      * @param falseToString
      */
     public void setFalseToString(final String falseToString) {
-        this.falseToString = falseToString;
+        BString.falseToString = falseToString;
     }
 
     /**
@@ -438,7 +446,7 @@ public class BString {
      * @return
      */
     public String setNullToString(final String nullToString) {
-        return this.nullToString = nullToString;
+        return BString.nullToString = nullToString;
     }
 
     private String getBorder() {
