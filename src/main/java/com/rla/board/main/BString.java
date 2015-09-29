@@ -214,16 +214,18 @@ public class BString {
      *            : the string
      */
     public void bLeft(final Object obj) {
-        String toLeft = eval(obj);
-        String toLeftTmp = getBorder() + toLeft + getBorder();
-        int len = toLeftTmp.length();
-        if (len == this.output_Width - 2)
-            append(PIPE + toLeftTmp + PIPE + END_LINE);
-        else if (len >= this.output_Width - 2)
-            append(PIPE + toLeftTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
-        else {
-            int all_blanks_count = this.output_Width - 2 - len;
-            append(PIPE + toLeftTmp + repeat(BLANK, all_blanks_count) + PIPE + END_LINE);
+        String[] splits = eval(obj).split("\n");
+        for (String str : splits) {
+            String toLeftTmp = getBorder() + str + getBorder();
+            int len = toLeftTmp.length();
+            if (len == this.output_Width - 2)
+                append(PIPE + toLeftTmp + PIPE + END_LINE);
+            else if (len >= this.output_Width - 2)
+                append(PIPE + toLeftTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
+            else {
+                int all_blanks_count = this.output_Width - 2 - len;
+                append(PIPE + toLeftTmp + repeat(BLANK, all_blanks_count) + PIPE + END_LINE);
+            }
         }
     }
 
@@ -234,16 +236,18 @@ public class BString {
      *            : the string
      */
     public void bRight(final Object obj) {
-        String toRight = eval(obj);
-        String toRightTmp = getBorder() + toRight + getBorder();
-        int len = toRightTmp.length();
-        if (len == this.output_Width - 2)
-            append(PIPE + toRightTmp + PIPE + END_LINE);
-        else if (len > this.output_Width - 2)
-            append(PIPE + toRightTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
-        else {
-            int all_blanks_count = this.output_Width - 2 - len;
-            append(PIPE + repeat(BLANK, all_blanks_count) + toRightTmp + PIPE + END_LINE);
+        String[] splits = eval(obj).split("\n");
+        for (String str : splits) {
+            String toRightTmp = getBorder() + str + getBorder();
+            int len = toRightTmp.length();
+            if (len == this.output_Width - 2)
+                append(PIPE + toRightTmp + PIPE + END_LINE);
+            else if (len > this.output_Width - 2)
+                append(PIPE + toRightTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
+            else {
+                int all_blanks_count = this.output_Width - 2 - len;
+                append(PIPE + repeat(BLANK, all_blanks_count) + toRightTmp + PIPE + END_LINE);
+            }
         }
     }
 
@@ -254,17 +258,19 @@ public class BString {
      *            : the string
      */
     public void bCenter(final Object obj) {
-        String toCenter = eval(obj);
-        String toCenterTmp = getBorder() + toCenter + getBorder();
-        int len = toCenterTmp.length();
-        if (len == this.output_Width - 2)
-            append(PIPE + toCenterTmp + PIPE + END_LINE);
-        else if (len >= this.output_Width - 2) {
-            append(PIPE + toCenterTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
-        } else {
-            int all_blanks_count = this.output_Width - 2 - len;
-            int left_blank = all_blanks_count / 2;
-            append(PIPE + repeat(BLANK, left_blank) + toCenterTmp + repeat(BLANK, all_blanks_count - left_blank) + PIPE + END_LINE);
+        String[] splits = eval(obj).split("\n");
+        for (String str : splits) {
+            String toCenterTmp = getBorder() + str + getBorder();
+            int len = toCenterTmp.length();
+            if (len == this.output_Width - 2)
+                append(PIPE + toCenterTmp + PIPE + END_LINE);
+            else if (len >= this.output_Width - 2) {
+                append(PIPE + toCenterTmp.substring(0, this.output_Width - 3 - CORRUPT_VALUE.length()) + CORRUPT_VALUE + " " + PIPE + END_LINE);
+            } else {
+                int all_blanks_count = this.output_Width - 2 - len;
+                int left_blank = all_blanks_count / 2;
+                append(PIPE + repeat(BLANK, left_blank) + toCenterTmp + repeat(BLANK, all_blanks_count - left_blank) + PIPE + END_LINE);
+            }
         }
     }
 
@@ -418,7 +424,7 @@ public class BString {
             else
                 return falseToString;
         }
-        return o.toString();
+        return o.toString().replace("\t", repeat(' ', 5));
     }
 
     /**
