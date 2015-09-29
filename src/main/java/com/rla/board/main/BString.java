@@ -8,6 +8,7 @@ package com.rla.board.main;
 // 3 dec. 2014 2nd version
 // 17 jun. 2015 3nd version
 // 26 aug. 2015 4nd version
+// git test : a change
 public class BString {
 
     private static final int DEFAULT_BORDER_WIDTH = 1;
