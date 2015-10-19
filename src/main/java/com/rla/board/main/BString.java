@@ -356,8 +356,7 @@ public class BString {
     public String toString() {
         this.board.insert(0, END_LINE);
         bEnd();
-        final String ret = this.board.toString();
-        ret.replace("\n", System.getProperty("line.separator"));
+        final String ret = this.board.toString().replace("\n", System.lineSeparator());
         this.board = new StringBuilder();
         bStart();
         return ret;
