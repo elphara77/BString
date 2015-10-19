@@ -15,7 +15,7 @@ public class BString {
     private static final int DEFAULT_LABEL_WIDTH = 30;
     private static final int DEFAULT_VALUE_WIDTH = 30;
 
-    private static final char END_LINE = '\n';
+    private static final String END_LINE = System.lineSeparator();
 
     private static final char BLANK = ' ';
 
@@ -215,7 +215,7 @@ public class BString {
      *            : the string
      */
     public void bLeft(final Object obj) {
-        String[] splits = eval(obj).split("\n");
+        String[] splits = eval(obj).split(System.lineSeparator());
         for (String str : splits) {
             String toLeftTmp = getBorder() + str + getBorder();
             int len = toLeftTmp.length();
@@ -237,7 +237,7 @@ public class BString {
      *            : the string
      */
     public void bRight(final Object obj) {
-        String[] splits = eval(obj).split("\n");
+        String[] splits = eval(obj).split(System.lineSeparator());
         for (String str : splits) {
             String toRightTmp = getBorder() + str + getBorder();
             int len = toRightTmp.length();
@@ -259,7 +259,7 @@ public class BString {
      *            : the string
      */
     public void bCenter(final Object obj) {
-        String[] splits = eval(obj).split("\n");
+        String[] splits = eval(obj).split(System.lineSeparator());
         for (String str : splits) {
             String toCenterTmp = getBorder() + str + getBorder();
             int len = toCenterTmp.length();
@@ -356,7 +356,7 @@ public class BString {
     public String toString() {
         this.board.insert(0, END_LINE);
         bEnd();
-        final String ret = this.board.toString().replace("\n", System.lineSeparator());
+        final String ret = this.board.toString();
         this.board = new StringBuilder();
         bStart();
         return ret;
@@ -512,6 +512,6 @@ public class BString {
         bs.bUpDown();
         bs.bCenter("This was a demo with BString");
         bs.bUpDown();
-        System.out.println(bs.toString());
+        System.out.println(bs.toLogString());
     }
 }
