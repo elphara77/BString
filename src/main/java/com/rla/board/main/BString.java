@@ -357,6 +357,7 @@ public class BString {
         this.board.insert(0, END_LINE);
         bEnd();
         final String ret = this.board.toString();
+        ret.replace("\n", System.getProperty("line.separator"));
         this.board = new StringBuilder();
         bStart();
         return ret;
@@ -512,6 +513,6 @@ public class BString {
         bs.bUpDown();
         bs.bCenter("This was a demo with BString");
         bs.bUpDown();
-        System.out.println(bs.toLogString());
+        System.out.println(bs.toString());
     }
 }
